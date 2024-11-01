@@ -1,18 +1,11 @@
 output "network_id" {
-  value = concat(
-    openstack_networking_network_v2.this[*].id,
-    [""],
-  )[0]
+  value = try(openstack_networking_network_v2.this[*].id[0], null)
 }
 
 output "router_id" {
-  value = concat(
-    openstack_networking_router_v2.this[*].id,
-    [lookup(var.router, "id", "")]
-  )[0]
+  value = try(openstack_networking_router_v2.this[*].id[0], null)
 }
 
 output "subnets" {
-  value = openstack_networking_subnet_v2.this[*]
+  value = try(openstack_networking_subnet_v2.this[*], [])
 }
-

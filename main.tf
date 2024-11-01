@@ -1,26 +1,10 @@
-terraform {
-  required_version = ">= 0.13"
-  required_providers {
-    openstack = {
-      source  = "terraform-provider-openstack/openstack"
-      version = ">= 1.39.0"
-    }
-    random = {
-      version = ">= 3.4.3"
-    }
-  }
-}
-
 resource "random_id" "this" {
   count       = var.create && var.use_name_prefix && var.name_prefix == "" ? 1 : 0
   byte_length = 8
 }
 
 locals {
-  this_net_id = concat(
-    openstack_networking_network_v2.this[*].id,
-    [""],
-  )[0]
+  this_net_id   = try(openstack_networking_network_v2.this[*].id[0], "")
   this_net_name = var.use_name_prefix ? (var.name_prefix == "" ? "${random_id.this[0].hex}-${var.name}" : "${var.name_prefix}-${var.name}") : var.name
 }
 
@@ -50,8 +34,9 @@ resource "openstack_networking_subnet_v2" "this" {
 }
 
 data "openstack_networking_network_v2" "this" {
-  count = var.create && contains(keys(var.router), "external_network_name") ? 1 : 0
-  name  = var.router.external_network_name
+  count  = var.create && contains(keys(var.router), "external_network_name") ? 1 : 0
+  name   = var.router.external_network_name
+  region = var.region
 }
 
 resource "openstack_networking_router_v2" "this" {
@@ -60,7 +45,19 @@ resource "openstack_networking_router_v2" "this" {
   admin_state_up      = lookup(var.router, "admin_state_up", var.admin_state_up)
   description         = lookup(var.router, "description", null)
   external_network_id = lookup(var.router, "external_network_id", lookup(var.router, "external_network_name", "") != "" ? data.openstack_networking_network_v2.this[0].id : null)
+  enable_snat         = lookup(var.router, "enable_snat", null)
+  region              = var.region
+  tags                = var.router_tags
+
+  dynamic "external_fixed_ip" {
+    for_each = var.router_fixed_ips
+    content {
+      subnet_id  = external_fixed_ip.value.subnet_id
+      ip_address = external_fixed_ip.value.ip_address
+    }
+  }
 }
+
 
 locals {
   router_id_indexes = [for e in var.subnets : index(var.subnets, e) if lookup(e, "router_id", null) != null && lookup(e, "router_id", null) != ""]
@@ -70,11 +67,15 @@ locals {
 
 resource "openstack_networking_router_interface_v2" "this_router_id" {
   count = var.create ? length(local.router_id_indexes) : 0
+
   router_id = (var.subnets[local.router_id_indexes[count.index]].router_id == "@self"
     ? openstack_networking_router_v2.this[0].id
-    : null
+    : var.subnets[local.router_id_indexes[count.index]].router_id
   )
-  subnet_id = openstack_networking_subnet_v2.this[local.router_id_indexes[count.index]].id
+
+  subnet_id     = openstack_networking_subnet_v2.this[local.router_id_indexes[count.index]].id
+  region        = var.region
+  force_destroy = lookup(var.router, "force_destroy", false)
 }
 
 resource "openstack_networking_subnet_route_v2" "this" {
@@ -82,4 +83,5 @@ resource "openstack_networking_subnet_route_v2" "this" {
   subnet_id        = openstack_networking_subnet_v2.this[local.routes[count.index].subnet_index].id
   destination_cidr = local.routes[count.index].destination_cidr
   next_hop         = local.routes[count.index].next_hop
+  region           = var.region
 }
