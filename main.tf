@@ -36,7 +36,7 @@ resource "openstack_networking_subnet_v2" "this" {
 data "openstack_networking_network_v2" "this" {
   count  = var.create && contains(keys(var.router), "external_network_name") ? 1 : 0
   name   = var.router.external_network_name
-  region = var.region
+  region = var.region != "" ? var.region : null
 }
 
 resource "openstack_networking_router_v2" "this" {
@@ -46,8 +46,8 @@ resource "openstack_networking_router_v2" "this" {
   description         = lookup(var.router, "description", null)
   external_network_id = lookup(var.router, "external_network_id", lookup(var.router, "external_network_name", "") != "" ? data.openstack_networking_network_v2.this[0].id : null)
   enable_snat         = lookup(var.router, "enable_snat", null)
-  region              = var.region
-  tags                = var.router_tags
+  region              = var.region != "" ? var.region : null
+  tags                = var.router_tags != "" ? var.router_tags : null
 
   dynamic "external_fixed_ip" {
     for_each = var.router_fixed_ips
