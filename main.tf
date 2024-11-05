@@ -18,12 +18,12 @@ resource "openstack_networking_network_v2" "this" {
 resource "openstack_networking_subnet_v2" "this" {
   count      = var.create ? length(var.subnets) : 0
   network_id = local.this_net_id
-  name = format(
+  name = lookup(var.subnets[count.index], "name", format(
     "%s-subnet-ipv%s-%s",
     local.this_net_name,
     lookup(var.subnets[count.index], "ip_version", 4),
     count.index + 1
-  )
+  ))
   description     = lookup(var.subnets[count.index], "description", null)
   cidr            = lookup(var.subnets[count.index], "cidr", null)
   ip_version      = lookup(var.subnets[count.index], "ip_version", null)
