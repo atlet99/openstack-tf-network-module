@@ -44,24 +44,13 @@ variable "router" {
   description = "Information used to create and/or connect router to subnets"
   type = object({
     create                = bool
-    name                  = string
-    description           = string
+    name                  = optional(string, null)
+    description           = optional(string, null)
     external_network_id   = string
-    enable_snat           = bool
-    external_network_name = string
-    force_destroy         = bool
+    enable_snat           = optional(bool, null)
+    force_destroy         = optional(bool, false)
   })
-  default = {
-    create                = true
-    name                  = null
-    description           = null
-    external_network_id   = null
-    enable_snat           = null
-    external_network_name = ""
-    force_destroy         = false
-  }
 }
-
 
 variable "region" {
   description = "Region where resources will be created"

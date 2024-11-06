@@ -40,11 +40,11 @@ data "openstack_networking_network_v2" "this" {
 }
 
 resource "openstack_networking_router_v2" "this" {
-  count               = var.create && lookup(var.router, "create", false) == true ? 1 : 0
+  count               = var.router.create ? 1 : 0
   name                = lookup(var.router, "name", null)
-  admin_state_up      = lookup(var.router, "admin_state_up", var.admin_state_up)
+  admin_state_up      = lookup(var.router, "admin_state_up", true)
   description         = lookup(var.router, "description", null)
-  external_network_id = lookup(var.router, "external_network_id", lookup(var.router, "external_network_name", "") != "" ? data.openstack_networking_network_v2.this[0].id : null)
+  external_network_id = var.router.external_network_id
   enable_snat         = lookup(var.router, "enable_snat", null)
   region              = var.region != "" ? var.region : null
   tags                = var.router_tags != "" ? var.router_tags : null
