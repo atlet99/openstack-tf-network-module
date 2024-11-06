@@ -28,7 +28,7 @@ resource "openstack_networking_subnet_v2" "this" {
   cidr            = lookup(var.subnets[count.index], "cidr", null)
   ip_version      = lookup(var.subnets[count.index], "ip_version", null)
   dns_nameservers = lookup(var.subnets[count.index], "dns_nameservers", null)
-  enable_dhcp     = lookup(var.subnets[count.index], "enable_dhcp", null)
+  enable_dhcp     = lookup(var.subnets[count.index], "enable_dhcp", false)
   gateway_ip      = lookup(var.subnets[count.index], "gateway_ip", null)
   no_gateway      = lookup(var.subnets[count.index], "no_gateway", null)
 }
