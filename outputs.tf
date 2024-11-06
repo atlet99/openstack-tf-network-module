@@ -7,5 +7,9 @@ output "router_id" {
 }
 
 output "subnets" {
-  value = try(openstack_networking_subnet_v2.this[*], [])
+  value = try([for subnet in openstack_networking_subnet_v2.this : {
+    id   = subnet.id
+    name = subnet.name
+    cidr = subnet.cidr
+  }], [])
 }
