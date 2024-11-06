@@ -33,12 +33,6 @@ resource "openstack_networking_subnet_v2" "this" {
   no_gateway      = lookup(var.subnets[count.index], "no_gateway", null)
 }
 
-data "openstack_networking_network_v2" "this" {
-  count  = var.create && contains(keys(var.router), "external_network_name") ? 1 : 0
-  name   = var.router.external_network_name
-  region = var.region != "" ? var.region : null
-}
-
 resource "openstack_networking_router_v2" "this" {
   count               = var.router.create ? 1 : 0
   name                = lookup(var.router, "name", null)
