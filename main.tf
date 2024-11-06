@@ -67,7 +67,7 @@ resource "openstack_networking_router_interface_v2" "this_router_id" {
   )
 
   subnet_id     = openstack_networking_subnet_v2.this[local.router_id_indexes[count.index]].id
-  region        = var.region
+  region        = var.region != "" ? var.region : null
   force_destroy = lookup(var.router, "force_destroy", false)
 }
 
