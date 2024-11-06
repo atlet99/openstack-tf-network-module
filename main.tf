@@ -4,7 +4,7 @@ resource "random_id" "this" {
 }
 
 locals {
-  this_net_id   = try(openstack_networking_network_v2.this[*].id[0], "")
+  this_net_id   = var.create && length(openstack_networking_network_v2.this) > 0 ? openstack_networking_network_v2.this[0].id : ""
   this_net_name = var.use_name_prefix ? (var.name_prefix == "" ? "${random_id.this[0].hex}-${var.name}" : "${var.name_prefix}-${var.name}") : var.name
 }
 
@@ -41,7 +41,7 @@ resource "openstack_networking_router_v2" "this" {
   external_network_id = var.router.external_network_id
   enable_snat         = lookup(var.router, "enable_snat", null)
   region              = var.region != "" ? var.region : null
-  tags                = var.router_tags != "" ? var.router_tags : null
+  tags                = var.router_tags != [] ? var.router_tags : null
 
   dynamic "external_fixed_ip" {
     for_each = var.router_fixed_ips
@@ -51,7 +51,6 @@ resource "openstack_networking_router_v2" "this" {
     }
   }
 }
-
 
 locals {
   router_id_indexes = [for e in var.subnets : index(var.subnets, e) if lookup(e, "router_id", null) != null && lookup(e, "router_id", null) != ""]
