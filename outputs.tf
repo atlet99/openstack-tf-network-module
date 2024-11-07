@@ -1,15 +1,15 @@
 output "network_id" {
-  value = try(openstack_networking_network_v2.this[*].id[0], null)
+  value = length(openstack_networking_network_v2.this) > 0 ? openstack_networking_network_v2.this[0].id : null
 }
 
 output "router_id" {
-  value = try(openstack_networking_router_v2.this[*].id[0], null)
+  value = length(openstack_networking_router_v2.this) > 0 ? openstack_networking_router_v2.this[0].id : null
 }
 
 output "subnets" {
-  value = try([for subnet in openstack_networking_subnet_v2.this : {
+  value = [for subnet in openstack_networking_subnet_v2.this : {
     id   = subnet.id
     name = subnet.name
     cidr = subnet.cidr
-  }], [])
+  }]
 }
