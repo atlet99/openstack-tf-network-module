@@ -2,6 +2,8 @@
 
 Terraform module which creates networks including subnets and optionally router on OpenStack.
 
+**Note:** This module requires **Terraform version 1.5.0** or higher and **OpenStack provider version 3.0.0** or higher.
+
 ## Features
 
 This modules aims to make it more compact to setup network, subnets and routers:
