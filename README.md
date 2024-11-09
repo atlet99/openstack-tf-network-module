@@ -1,8 +1,5 @@
 # Terraform OpenStack Network Module
 
-[![Terraform module](https://img.shields.io/badge/dynamic/json.svg?url=https://registry.terraform.io/v1/modules/haxorof/network/openstack&label=haxorof/network/openstack&query=$.version&color=blue)](https://registry.terraform.io/modules/haxorof/network/openstack)
-![Module downloads](https://img.shields.io/badge/dynamic/json.svg?url=https://registry.terraform.io/v1/modules/haxorof/network/openstack&label=downloads&query=$.downloads&color=green)
-
 Terraform module which creates networks including subnets and optionally router on OpenStack.
 
 ## Features
@@ -38,10 +35,6 @@ module "example_net" {
 }
 ```
 
-## Examples
-
-* [Simple examples](https://github.com/haxorof/terraform-openstack-network/blob/master/examples/simple)
-
 ## License
 
-This is an open source project under the [MIT](https://github.com/haxorof/terraform-openstack-network/blob/master/LICENSE) license.
+This is an open source project under the [MIT](https://github.com/atlet99/openstack-tf-network-module/blob/master/LICENSE) license.
