@@ -43,12 +43,12 @@ variable "admin_state_up" {
 variable "router" {
   description = "Information used to create and/or connect router to subnets"
   type = object({
-    create                = bool
-    name                  = optional(string, null)
-    description           = optional(string, null)
-    external_network_id   = string
-    enable_snat           = optional(bool, null)
-    force_destroy         = optional(bool, false)
+    create              = bool
+    name                = optional(string, null)
+    description         = optional(string, null)
+    external_network_id = string
+    enable_snat         = optional(bool, null)
+    force_destroy       = optional(bool, false)
   })
 }
 

@@ -11,5 +11,6 @@ output "subnets" {
     id   = subnet.id
     name = subnet.name
     cidr = subnet.cidr
+    tags = subnet.tags
   }]
 }
