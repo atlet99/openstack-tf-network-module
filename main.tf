@@ -31,6 +31,7 @@ resource "openstack_networking_subnet_v2" "this" {
   enable_dhcp     = lookup(var.subnets[count.index], "enable_dhcp", false)
   gateway_ip      = lookup(var.subnets[count.index], "gateway_ip", null)
   no_gateway      = lookup(var.subnets[count.index], "no_gateway", null)
+  tags            = var.subnet_tags[count.index]
 }
 
 resource "openstack_networking_router_v2" "this" {

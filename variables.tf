@@ -80,3 +80,9 @@ variable "router_fixed_ips" {
   }))
   default = []
 }
+
+variable "subnet_tags" {
+  description = "List of tags for each subnet"
+  type        = list(list(string))
+  default     = []
+}
