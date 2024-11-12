@@ -52,6 +52,7 @@ resource "openstack_networking_subnet_v2" "this" {
   #     - subnets[0] gets subnet_tags[0]
   #     - subnets[1] gets subnet_tags[1]
 
+  # Tags assignment using count.index and modulo to cycle through subnet_tags
   tags = length(var.subnet_tags) > 0 ? element(var.subnet_tags, count.index % length(var.subnet_tags)) : []
 }
 
