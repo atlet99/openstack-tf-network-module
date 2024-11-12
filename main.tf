@@ -31,7 +31,32 @@ resource "openstack_networking_subnet_v2" "this" {
   enable_dhcp     = lookup(var.subnets[count.index], "enable_dhcp", false)
   gateway_ip      = lookup(var.subnets[count.index], "gateway_ip", null)
   no_gateway      = lookup(var.subnets[count.index], "no_gateway", null)
-  tags            = length(var.subnet_tags) > count.index ? var.subnet_tags[count.index] : []
+
+  # Logic for assigning tags:
+  # - If `subnet_tags` has an entry for the current subnet, it is directly assigned.
+  # - If subnets outnumber tags, existing tags are cycled.
+  # - If tags outnumber subnets, extra tags are ignored.
+  #
+  # Examples:
+  # 1. 3 subnets, 2 subnet_tags: tags cycle across subnets
+  #     - subnets[0] gets subnet_tags[0]
+  #     - subnets[1] gets subnet_tags[1]
+  #     - subnets[2] gets subnet_tags[0]
+  #
+  # 2. 3 subnets, 3 subnet_tags: each subnet gets a corresponding tag
+  #     - subnets[0] gets subnet_tags[0]
+  #     - subnets[1] gets subnet_tags[1]
+  #     - subnets[2] gets subnet_tags[2]
+  #
+  # 3. 2 subnets, 3 subnet_tags: only first two tags are used
+  #     - subnets[0] gets subnet_tags[0]
+  #     - subnets[1] gets subnet_tags[1]
+
+  tags            = length(var.subnet_tags) > count.index
+                    ? var.subnet_tags[count.index]
+                    : count.index < length(var.subnet_tags)
+                      ? var.subnet_tags[count.index % length(var.subnet_tags)]
+                      : []
 }
 
 resource "openstack_networking_router_v2" "this" {
