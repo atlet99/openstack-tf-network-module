@@ -52,11 +52,7 @@ resource "openstack_networking_subnet_v2" "this" {
   #     - subnets[0] gets subnet_tags[0]
   #     - subnets[1] gets subnet_tags[1]
 
-  tags            = length(var.subnet_tags) > count.index
-                    ? var.subnet_tags[count.index]
-                    : count.index < length(var.subnet_tags)
-                      ? var.subnet_tags[count.index % length(var.subnet_tags)]
-                      : []
+  tags = length(var.subnet_tags) > 0 ? element(var.subnet_tags, count.index % length(var.subnet_tags)) : []
 }
 
 resource "openstack_networking_router_v2" "this" {
