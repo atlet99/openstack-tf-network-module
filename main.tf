@@ -13,6 +13,8 @@ resource "openstack_networking_network_v2" "this" {
   name           = local.this_net_name
   description    = var.description
   admin_state_up = var.admin_state_up
+  region               = var.region == null ? null : var.region
+  availability_zone_hints = var.az == null ? null : var.az
 }
 
 resource "openstack_networking_subnet_v2" "this" {
@@ -63,7 +65,8 @@ resource "openstack_networking_router_v2" "this" {
   description         = lookup(var.router, "description", null)
   external_network_id = var.router.external_network_id
   enable_snat         = lookup(var.router, "enable_snat", null)
-  region              = var.region != "" ? var.region : null
+  region               = var.region == null ? null : var.region
+  availability_zone_hints = var.az == null ? null : var.az
   tags                = var.router_tags != [] ? var.router_tags : null
 
   dynamic "external_fixed_ip" {
