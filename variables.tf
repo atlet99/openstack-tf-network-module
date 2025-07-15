@@ -37,9 +37,9 @@ variable "admin_state_up" {
 }
 
 variable "az" {
-  type = string
+  type        = string
   description = "An availability zone is used to make network resources highly available."
-  default = ""
+  default     = ""
 }
 
 ########
@@ -61,7 +61,7 @@ variable "router" {
 variable "region" {
   description = "Region where resources will be created"
   type        = string
-  default = ""
+  default     = ""
 }
 
 #########
