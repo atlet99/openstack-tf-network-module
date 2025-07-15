@@ -37,9 +37,9 @@ variable "admin_state_up" {
 }
 
 variable "az" {
-  type        = string
+  type        = list(string)
   description = "An availability zone is used to make network resources highly available."
-  default     = ""
+  default     = null
 }
 
 ########
