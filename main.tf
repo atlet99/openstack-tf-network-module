@@ -64,7 +64,7 @@ resource "openstack_networking_router_v2" "this" {
   admin_state_up          = lookup(var.router, "admin_state_up", true)
   description             = lookup(var.router, "description", null)
   external_network_id     = var.router.external_network_id
-  enable_snat             = lookup(var.router, "enable_snat", null)
+  enable_snat             = lookup(var.router, "enable_snat", false)
   region                  = var.region == null ? null : var.region
   availability_zone_hints = var.az == null ? null : var.az
   tags                    = var.router_tags != [] ? var.router_tags : null
