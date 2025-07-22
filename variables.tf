@@ -53,7 +53,7 @@ variable "router" {
     name                = optional(string, null)
     description         = optional(string, null)
     external_network_id = string
-    enable_snat         = optional(bool, null)
+    enable_snat         = optional(bool, false)
     force_destroy       = optional(bool, false)
   })
 }
